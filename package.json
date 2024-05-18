@@ -1,0 +1,10 @@
+{
+  "name": "windows-custom-commands",
+  "version": "0.0.1",
+  "description": "custom windows powershell commands",
+  "license": "ISC",
+  "author": "João Luiz de Castro",
+  "dependencies": {
+    "puppeteer": "^22.9.0"
+  }
+}
