@@ -1,0 +1,12 @@
+{
+  "browseAndLogin": {
+    "[actions]": {
+      "url": "",
+      "usernameInput": "",
+      "usernameValue": "",
+      "passwordInput": "",
+      "passwordValue": "",
+      "loginButton": ""
+    }
+  }
+}
