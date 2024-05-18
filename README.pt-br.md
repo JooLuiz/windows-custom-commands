@@ -165,6 +165,21 @@ De maneira semelhante ao comando anterior e como mencionado na seção 1.2 deste
 New-Alias -Name touch -Value Path\To\Your\Cloned\Repo\touch\touch.bat
 ```
 
+### 3.3 reinitialize
+
+#### 3.3.1 Especificações
+
+O comando `reinitialize` reinicializa o seu PowerShell, carregando quaisquer novas alterações feitas no seu `$PROFILE` sem que você precise fechar o terminal.
+
+#### 3.3.2 Configuração
+
+da mesma forma que o comando anterior e conforme mencionado na seção 1.2 deste README, você precisa configurar o comando no `$PROFILE`. Uma vez aberto o profile, o comando fica assim:
+
+```powershell
+New-Alias -Name reinitialize -Value Caminho\Para\Seu\Repositorio\Clonado\reinitialize\reinitialize.bat
+```
+
+
 # Other versions
 
 [Readme em Inglês (EN)](README.md)
