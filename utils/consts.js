@@ -1,5 +1,6 @@
 const consts = {
   identification: {
+    scheduler: "[Scheduler]",
     browseAndLogin: "[Browse and Login]",
     getArgValue: "[Utils - Get Arg Value]",
   },

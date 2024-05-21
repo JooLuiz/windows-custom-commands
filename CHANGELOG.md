@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [WIP] Implementing a more visual scheduler.
+
 ## [0.0.2] - 2024-05-18
 
 ### Added
