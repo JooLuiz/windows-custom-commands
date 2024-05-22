@@ -3,11 +3,18 @@
 setlocal
 
 if "%~1"=="" (
-    set "tempFile=scheduled_tasks_temp.txt"
+    set "csvTempFile=scheduled_tasks_temp.csv"
 ) else (
-    set "tempFile=%~1"
+    set "csvTempFile=%~1"
 )
 
-del %tempFile%
+if "%~2"=="" (
+    set "jsonTempFile=scheduled_tasks_temp.json"
+) else (
+    set "jsonTempFile=%~2"
+)
+
+del %csvTempFile%
+del %jsonTempFile%
 
 endlocal

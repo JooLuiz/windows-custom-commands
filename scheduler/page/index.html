@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scheduled Jobs</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+    <style>
+      body {
+        padding: 20px;
+      }
+      .ui.table th {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui container">
+      <h2 class="ui header">Scheduled Jobs</h2>
+      <button class="ui primary button" id="addJobBtn">Add New Job</button>
+      <table class="ui celled table sortable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Next Run Time</th>
+            <th>Last Run Time</th>
+            <th>Actions</th>
+          </tr>
+          <tr>
+            <th>
+              <input type="text" id="nameFilter" placeholder="Search by Name" />
+            </th>
+            <th>
+              <input
+                type="text"
+                id="nextRunFilter"
+                placeholder="Search by Next Run Time"
+              />
+            </th>
+            <th>
+              <input
+                type="text"
+                id="lastRunFilter"
+                placeholder="Search by Last Run Time"
+              />
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="jobTableBody">
+          <!-- Dynamic content will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Load JSON data and populate the table
+        $.getJSON("scheduled_tasks", function (data) {
+          populateTable(data);
+        });
+
+        function populateTable(jobs) {
+          const tbody = $("#jobTableBody");
+          tbody.empty();
+          jobs.forEach((job) => {
+            const row = `
+                        <tr>
+                            <td>${job["Nome da tarefa"]}</td>
+                            <td>${job["Hora da próxima execução"]}</td>
+                            <td>${job["execução"]}</td>
+                            <td>
+                                <button class="ui button editBtn">Edit</button>
+                                <button class="ui button viewBtn">View</button>
+                            </td>
+                        </tr>
+                    `;
+            tbody.append(row);
+          });
+        }
+
+        // Add sorting functionality
+        $("table.sortable th").on("click", function () {
+          const column = $(this).index();
+          const rows = $("#jobTableBody tr").get();
+
+          rows.sort(function (a, b) {
+            const A = $(a).children("td").eq(column).text().toUpperCase();
+            const B = $(b).children("td").eq(column).text().toUpperCase();
+            if (A < B) return -1;
+            if (A > B) return 1;
+            return 0;
+          });
+
+          $.each(rows, function (index, row) {
+            $("#jobTableBody").append(row);
+          });
+        });
+
+        // Add filter functionality
+        $("#nameFilter").on("keyup", function () {
+          filterTable(0, $(this).val());
+        });
+        $("#nextRunFilter").on("keyup", function () {
+          filterTable(1, $(this).val());
+        });
+        $("#lastRunFilter").on("keyup", function () {
+          filterTable(2, $(this).val());
+        });
+
+        function filterTable(column, value) {
+          $("#jobTableBody tr").each(function () {
+            const cell = $(this).children("td").eq(column).text().toUpperCase();
+            if (cell.indexOf(value.toUpperCase()) > -1) {
+              $(this).show();
+            } else {
+              $(this).hide();
+            }
+          });
+        }
+
+        // Button click handlers
+        $("#addJobBtn").on("click", function () {
+          alert("Add new job functionality to be implemented");
+        });
+
+        $(document).on("click", ".editBtn", function () {
+          const row = $(this).closest("tr");
+          alert("Edit job functionality to be implemented");
+        });
+
+        $(document).on("click", ".viewBtn", function () {
+          const row = $(this).closest("tr");
+          alert("View job functionality to be implemented");
+        });
+      });
+    </script>
+  </body>
+</html>

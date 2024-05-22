@@ -13,6 +13,4 @@ set "outputFile=scheduled_tasks_temp.csv"
 
 schtasks /query /fo %format% /v > %outputFile%
 
-type %outputFile%
-
 endlocal
