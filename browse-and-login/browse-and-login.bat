@@ -13,7 +13,6 @@ for %%x in (%*) do (
   set "argVec[!argCount!]=%%~x"
 
   if "%%~x"=="-v" (
-    echo "sou verbose"
     set isVerbose=true
   ) else if "%%~x"=="--verbose" (
     set isVerbose=true

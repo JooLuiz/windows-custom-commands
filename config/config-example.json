@@ -8,5 +8,8 @@
       "passwordValue": "",
       "loginButton": ""
     }
+  },
+  "scheduler": {
+    "serverPort": 3002
   }
 }

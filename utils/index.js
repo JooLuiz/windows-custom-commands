@@ -2,6 +2,7 @@ const { getConfigs } = require("../utils/getConfig");
 const { logger } = require("../utils/logger");
 const { consts } = require("./consts");
 const { convertCSVToJson } = require("./convertCSVToJson");
+const { createPuppeteerBrowser } = require("./createPuppeteerBrowser");
 const { getArgValue } = require("./getArgValue");
 const { writeInFile } = require("./writeInFile");
 
@@ -11,5 +12,6 @@ module.exports = {
   getArgValue,
   consts,
   convertCSVToJson,
-  writeInFile
+  writeInFile,
+  createPuppeteerBrowser
 };

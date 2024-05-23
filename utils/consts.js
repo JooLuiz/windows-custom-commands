@@ -4,7 +4,8 @@ const consts = {
     browseAndLogin: "[Browse and Login]",
     getArgValue: "[Utils - Get Arg Value]",
     convertCSVToJson: "[Utils - Convert CSV To Json]",
-    saveNewFile: "[Utils - Save New File]"
+    saveNewFile: "[Utils - Write In File]",
+    createPuppeteerBrowser: "[Utils - Create Puppeteer Browser]"
   },
   missingActionMsg: "Missing action to be performed",
   missingConfigMsg: "Missing Configuration",

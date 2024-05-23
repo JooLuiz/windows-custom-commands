@@ -1,10 +1,13 @@
 const { spawn } = require("child_process");
 const path = require("path");
 
-function deleteScheduledJobsTempFile(logInfo, logError) {
+async function deleteScheduledJobsTempFile(logInfo, logError) {
   logInfo(`Deleting Temp Files`);
+
+  const directory = __dirname.replace("\\functions", "")
+
   const batFilePath = path.resolve(
-    __dirname,
+    directory,
     "delete-scheduled-tasks-temp-file.bat"
   );
 
@@ -14,9 +17,17 @@ function deleteScheduledJobsTempFile(logInfo, logError) {
     logError(data.toString());
   });
 
-  bat.on("close", () => {
-    logInfo(`Temp Files deleted`);
+  await new Promise((resolve, reject) => {
+  bat.on("close", (code) => {
+    if (code === 0) {
+      logInfo(`Temp Files deleted`);
+      resolve();
+    } else {
+      logError(`Failed to delete temp files. Exit code: ${code}`)
+      reject(new Error(`Failed to execute bat file. Exit code: ${code}`));
+    }
   });
+  })
 }
 
 module.exports = {

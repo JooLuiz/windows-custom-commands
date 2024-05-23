@@ -1,6 +1,20 @@
-const { logger, consts, getArgValue } = require("../utils");
-const { getScheduledJobs, mountJobsJsonFile, openSchedulerPage } = require("./functions");
-const { startSchedulerServer } = require("./server/schedulerServer");
+const {
+  logger,
+  consts,
+  getArgValue,
+  createPuppeteerBrowser,
+} = require("../utils");
+const {
+  getScheduledJobs,
+  mountJobsJsonFile,
+  openSchedulerPage,
+  deleteScheduledJobsTempFile,
+} = require("./functions");
+const {
+  createSchedulerServer,
+  startSchedulerServer,
+  stopSchedulerServer,
+} = require("./server");
 
 const isVerbose = getArgValue("--verbose", "equals");
 
@@ -13,13 +27,22 @@ const logInfo = (data) => {
 const logError = logger("error", consts.identification.scheduler);
 
 async function exec() {
-  await getScheduledJobs(logInfo, logError)
+  await getScheduledJobs(logInfo, logError);
 
-  await mountJobsJsonFile(logInfo, logError, isVerbose)
+  await mountJobsJsonFile(logInfo, logError, isVerbose);
 
-  await startSchedulerServer(logInfo, logError)
+  const server = await createSchedulerServer(logInfo, logError);
 
-  await openSchedulerPage(logInfo, logError)
+  const handleCloseBrowser = async () => {
+    await stopSchedulerServer(server, logInfo, logError);
+    await deleteScheduledJobsTempFile(logInfo, logError);
+  };
+
+  const browser = await createPuppeteerBrowser(isVerbose, handleCloseBrowser);
+
+  await startSchedulerServer(server, logInfo, logError);
+
+  await openSchedulerPage(browser, logInfo, logError);
 }
 
 exec();

@@ -39,10 +39,11 @@ function convertCSVToJson(filePath, isVerbose) {
             .replace(/"/g, "");
         });
 
-        logInfo("Converted csv to json", isVerbose)
-
+        
         return obj;
       });
+      
+      logInfo("Converted csv to json", isVerbose)
 
       resolve(objs);
     });

@@ -3,13 +3,11 @@ setlocal
 
 chcp 65001 > nul
 
-if "%~1"=="" (
-    set "format=csv"
-) else (
-    set "format=%~1"
-)
+set "format=csv"
 
-set "outputFile=scheduled_tasks_temp.csv"
+set batchDir=%~dp0
+
+set "outputFile=%batchDir%\scheduled_tasks_temp.csv"
 
 schtasks /query /fo %format% /v > %outputFile%
 
