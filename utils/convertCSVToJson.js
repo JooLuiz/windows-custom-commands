@@ -9,7 +9,6 @@ const logInfo = (data, isVerbose) => {
   }
 };
 
-
 function convertCSVToJson(filePath, isVerbose) {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, "utf8", (err, data) => {
@@ -18,7 +17,7 @@ function convertCSVToJson(filePath, isVerbose) {
         logError(err);
         return;
       }
-      logInfo("Loaded csv file",isVerbose)
+      logInfo("Loaded csv file", isVerbose);
 
       const rows = data.trim().split("\n");
 
@@ -39,11 +38,10 @@ function convertCSVToJson(filePath, isVerbose) {
             .replace(/"/g, "");
         });
 
-        
         return obj;
       });
-      
-      logInfo("Converted csv to json", isVerbose)
+
+      logInfo("Converted csv to json", isVerbose);
 
       resolve(objs);
     });
@@ -51,5 +49,5 @@ function convertCSVToJson(filePath, isVerbose) {
 }
 
 module.exports = {
-  convertCSVToJson
-}
+  convertCSVToJson,
+};

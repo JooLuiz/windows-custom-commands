@@ -17,7 +17,9 @@ async function createPuppeteerBrowser(isVerbose, handleDisconnect) {
       args: ["--start-maximized", "--no-sandbox", "--disable-setuid-sandbox"],
     });
 
-    browser.on("disconnected", handleDisconnect ?? (() => {}));
+    if(handleDisconnect){
+      browser.on("disconnected", handleDisconnect);
+    }
 
     return browser;
   } catch (err) {
