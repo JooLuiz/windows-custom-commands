@@ -11,8 +11,10 @@ async function mountJobsJsonFile(logInfo, logError, isVerbose) {
         const csvFilePath = path.resolve(directory, csvFileName);
       
         const scheduledJobsJson = await convertCSVToJson(csvFilePath, isVerbose);
+
+        const filteredJobs = scheduledJobsJson.filter((job) => job && job["Nome do host"] !== "Nome do host")
       
-        const formattedJobs = JSON.stringify(scheduledJobsJson, null, 2);
+        const formattedJobs = JSON.stringify(filteredJobs, null, 2);
       
         writeInFile(jsonFilePath, formattedJobs, isVerbose);
         

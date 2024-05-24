@@ -9,6 +9,18 @@ const logInfo = (data, isVerbose) => {
   }
 };
 
+function mountJsonObj(headers, values) {
+  const obj = {};
+
+  headers.forEach((header, headerIndex) => {
+    obj[header.trim().replace(/"/g, "")] = values[headerIndex]
+      .trim()
+      .replace(/"/g, "");
+  });
+
+  return obj
+}
+
 function convertCSVToJson(filePath, isVerbose) {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, "utf8", (err, data) => {
@@ -21,7 +33,7 @@ function convertCSVToJson(filePath, isVerbose) {
 
       const rows = data.trim().split("\n");
 
-      const headers = rows[0].split(",");
+      let headers = rows[0].split(",");
 
       const objs = rows.slice(1).map((row, rowIndex) => {
         if (rowIndex === rows.length - 2) {
@@ -30,13 +42,7 @@ function convertCSVToJson(filePath, isVerbose) {
 
         const values = row.split(",");
 
-        const obj = {};
-
-        headers.forEach((header, headerIndex) => {
-          obj[header.trim().replace(/"/g, "")] = values[headerIndex]
-            .trim()
-            .replace(/"/g, "");
-        });
+        const obj = mountJsonObj(headers, values)
 
         return obj;
       });
