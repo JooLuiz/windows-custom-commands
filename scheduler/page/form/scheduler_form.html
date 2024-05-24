@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scheduler Form</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+    <link rel="stylesheet" href="form/scheduler_form.css" />
+  </head>
+  <body>
+    <div class="ui container">
+      <h2 class="ui header">Scheduler Form</h2>
+      <form class="ui form" id="schedulerForm">
+        <div class="field">
+          <label for="schedulerName">Scheduler Name</label>
+          <input type="text" id="schedulerName" name="schedulerName" required />
+        </div>
+        <div class="field">
+          <label for="frequency">Execution Frequency</label>
+          <select id="frequency" name="frequency" required>
+            <option value="unique">One-time</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" name="startDate" required />
+        </div>
+        <div class="field">
+          <label for="time">Time</label>
+          <input type="time" id="time" name="time" required />
+        </div>
+        <div class="field" id="dayField">
+          <label for="day">Day</label>
+          <select id="day" name="day"></select>
+        </div>
+        <button type="submit" class="ui primary button">Save</button>
+        <button type="button" class="ui button" id="cancelButton">
+          Cancel
+        </button>
+      </form>
+    </div>
+
+    <script src="form/scheduler_form.js"></script>
+  </body>
+</html>
