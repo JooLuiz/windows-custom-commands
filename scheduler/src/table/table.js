@@ -97,7 +97,7 @@ $(document).ready(function () {
   }
 
   $("#addJobBtn").on("click", function () {
-    alert("Add new job functionality to be implemented");
+    window.location.href = "/form";
   });
 
   $(document).on("click", ".editBtn", function () {

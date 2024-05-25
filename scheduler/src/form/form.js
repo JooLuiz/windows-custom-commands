@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   document.getElementById("cancelButton").addEventListener("click", () => {
-    alert("Form canceled!");
-    // Add logic to handle form cancellation
+    window.location.href = "/table";
   });
 });

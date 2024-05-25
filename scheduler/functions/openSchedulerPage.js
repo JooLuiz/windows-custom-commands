@@ -11,7 +11,7 @@ async function openSchedulerPage(browser, logInfo, logError) {
     configs?.scheduler?.serverPort ?? defaultPort
   }`;
 
-  const url = `${baseUrl}/scheduler`;
+  const url = `${baseUrl}/table`;
 
   try {
     const page = await browser.newPage();
