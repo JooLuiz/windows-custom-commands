@@ -18,6 +18,10 @@ async function translateFrequency(frequency) {
     semanalmente: "weekly",
     monthly: "monthly",
     "no logon": "triggered",
+    "Quando um evento ocorrer": "triggered",
+    "sob demanda": "on demand",
+    indefinido: "undefined",
+    "Na inicialização do sistema": "on system initialization",
   };
 
   let hasFreq;
@@ -47,7 +51,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       timeField.style.display = "block";
       startDateField.style.display = "block";
       populateDayOptions(frequency);
-    } else if (frequency === "triggered") {
+    } else if (
+      frequency === "triggered" ||
+      frequency === "on demand" ||
+      frequency === "undefined" ||
+      frequency === "on system initialization"
+    ) {
       dayField.style.display = "none";
       timeField.style.display = "none";
       startDateField.style.display = "none";
@@ -98,6 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
     if (currentJob) {
+      console.log("currentJob", currentJob);
       const formattedStartDate = formatDateYYYYMMDD(
         currentJob["Data de início"]
       );

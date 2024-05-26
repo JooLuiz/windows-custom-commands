@@ -27,6 +27,14 @@ const schedulerRouter = {
     contentType: "text/html",
     includeJSandCSS: true,
   },
+  "/details": {
+    method: "get",
+    action: "readFile",
+    directory: "details",
+    file: "details.html",
+    contentType: "text/html",
+    includeJSandCSS: true,
+  },
 };
 
 module.exports = {
