@@ -25,13 +25,14 @@
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
+            <option value="triggered" disabled>Triggered</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field" id="startDateField">
           <label for="startDate">Start Date</label>
           <input type="date" id="startDate" name="startDate" required />
         </div>
-        <div class="field">
+        <div class="field" id="timeField">
           <label for="time">Time</label>
           <input type="time" id="time" name="time" required />
         </div>
@@ -46,6 +47,7 @@
       </form>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="form/form.js"></script>
   </body>
 </html>

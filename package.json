@@ -5,6 +5,7 @@
   "license": "ISC",
   "author": "João Luiz de Castro",
   "dependencies": {
-    "puppeteer": "^22.9.0"
+    "puppeteer": "^22.9.0",
+    "uuid": "^9.0.1"
   }
 }

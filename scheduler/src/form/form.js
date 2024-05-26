@@ -1,14 +1,59 @@
-document.addEventListener("DOMContentLoaded", () => {
+function formatDateYYYYMMDD(dateString) {
+  // Split the input date string into day, month, and year components
+  const [day, month, year] = dateString.split("/");
+
+  // Format the components into yyyy-MM-dd
+  const formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(
+    2,
+    "0"
+  )}`;
+
+  return formattedDate;
+}
+
+async function translateFrequency(frequency) {
+  const frequenciesTranslations = {
+    "somente uma vez": "unique",
+    diário: "daily",
+    semanalmente: "weekly",
+    monthly: "monthly",
+    "no logon": "triggered",
+  };
+
+  let hasFreq;
+
+  await Object.entries(frequenciesTranslations).forEach((entry) => {
+    let key = entry[0];
+    let options = entry[1];
+    if (frequency.trim().toLowerCase().includes(key.trim().toLowerCase())) {
+      hasFreq = options;
+    }
+  });
+
+  return hasFreq ?? frequency;
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
   const frequencySelect = document.getElementById("frequency");
   const dayField = document.getElementById("dayField");
   const daySelect = document.getElementById("day");
+  const timeField = document.getElementById("timeField");
+  const startDateField = document.getElementById("startDateField");
 
   frequencySelect.addEventListener("change", () => {
     const frequency = frequencySelect.value;
     if (frequency === "weekly" || frequency === "monthly") {
       dayField.style.display = "block";
+      timeField.style.display = "block";
+      startDateField.style.display = "block";
       populateDayOptions(frequency);
+    } else if (frequency === "triggered") {
+      dayField.style.display = "none";
+      timeField.style.display = "none";
+      startDateField.style.display = "none";
     } else {
+      timeField.style.display = "block";
+      startDateField.style.display = "block";
       dayField.style.display = "none";
     }
   });
@@ -17,18 +62,18 @@ document.addEventListener("DOMContentLoaded", () => {
     daySelect.innerHTML = "";
     if (frequency === "weekly") {
       const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
+        ["Sunday", "SUN"],
+        ["Monday", "MON"],
+        ["Tuesday", "TUE"],
+        ["Wednesday", "WED"],
+        ["Thursday", "THU"],
+        ["Friday", "FRI"],
+        ["Saturday", "SAT"],
       ];
-      daysOfWeek.forEach((day, index) => {
+      daysOfWeek.forEach((day) => {
         const option = document.createElement("option");
-        option.value = index + 1;
-        option.textContent = day;
+        option.value = day[1];
+        option.textContent = day[0];
         daySelect.appendChild(option);
       });
     } else if (frequency === "monthly") {
@@ -40,6 +85,39 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
+
+  if (window.location.search.includes("uuid=")) {
+    let currentJob;
+    const uuid = window.location.search.split("uuid=")[1].split("&")[0];
+
+    await $.getJSON("scheduled_tasks", function (data) {
+      data.map((d) => {
+        if (d.uuid === uuid) {
+          currentJob = d;
+        }
+      });
+    });
+    if (currentJob) {
+      const formattedStartDate = formatDateYYYYMMDD(
+        currentJob["Data de início"]
+      );
+      const translatedFrequency = await translateFrequency(
+        currentJob["Tipo de Agendamento"]
+      );
+
+      document.getElementById("schedulerName").value =
+        currentJob["Nome da tarefa"];
+
+      document.getElementById("frequency").value = translatedFrequency;
+      document.getElementById("frequency").dispatchEvent(new Event("change"));
+
+      document.getElementById("startDate").value = formattedStartDate;
+
+      document.getElementById("time").value = currentJob["Hora de início"];
+
+      document.getElementById("day").value = currentJob["Dias"];
+    }
+  }
 
   document
     .getElementById("schedulerForm")

@@ -8,7 +8,7 @@ $(document).ready(function () {
     tbody.empty();
     jobs.forEach((job) => {
       const row = `
-                  <tr>
+                  <tr data-uuid="${job.uuid}">
                       <td>${job["Nome da tarefa"]}</td>
                       <td>${job["Hora da próxima execução"]}</td>
                       <td>${job["execução"]}</td>
@@ -102,11 +102,13 @@ $(document).ready(function () {
 
   $(document).on("click", ".editBtn", function () {
     const row = $(this).closest("tr");
-    alert("Edit job functionality to be implemented");
+    const uuid = row.data("uuid");
+    window.location.href = `/form?uuid=${uuid}`;
   });
 
   $(document).on("click", ".viewBtn", function () {
     const row = $(this).closest("tr");
-    alert("View job functionality to be implemented");
+    const uuid = row.data("uuid");
+    window.location.href = `/details?uuid=${uuid}`;
   });
 });

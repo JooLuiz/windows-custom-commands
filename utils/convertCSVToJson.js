@@ -21,7 +21,7 @@ function mountJsonObj(headers, values) {
   return obj
 }
 
-function convertCSVToJson(filePath, isVerbose) {
+function convertCSVToJson(filePath, isVerbose, separator = ",") {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, "utf8", (err, data) => {
       if (err) {
@@ -33,14 +33,14 @@ function convertCSVToJson(filePath, isVerbose) {
 
       const rows = data.trim().split("\n");
 
-      let headers = rows[0].split(",");
+      let headers = rows[0].split(`\"${separator}\"`);
 
       const objs = rows.slice(1).map((row, rowIndex) => {
         if (rowIndex === rows.length - 2) {
           return;
         }
 
-        const values = row.split(",");
+        const values = row.split(`\"${separator}\"`);
 
         const obj = mountJsonObj(headers, values)
 
