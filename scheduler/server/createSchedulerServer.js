@@ -2,6 +2,7 @@ const http = require("http");
 const path = require("path");
 const fs = require("fs");
 const { schedulerRouter } = require("./router");
+const { spawn } = require("child_process");
 
 async function createSchedulerServer(logInfo, logError) {
   logInfo("Creating Server");
@@ -16,6 +17,12 @@ async function createSchedulerServer(logInfo, logError) {
         response.end(data);
       }
     });
+  };
+
+  const buildFilePath = (htmlPageDirectory, directory, file) => {
+    const customDirectoryPath = path.join(htmlPageDirectory, directory);
+    const customFilePath = path.join(customDirectoryPath, file);
+    return customFilePath;
   };
 
   const server = http.createServer(async (req, res) => {
@@ -38,41 +45,38 @@ async function createSchedulerServer(logInfo, logError) {
             res.writeHead(302, { Location: options.url });
             res.end();
             return;
-          } else if (options.action == "readFile") {
+          } else {
             const escapedReqUrl = `/${options.directory}/`.replace(
               /[.*+?^${}()|[\]\\]/g,
               "\\$&"
             );
-            if (options.includeJSandCSS) {
-              const jsCssRegex = new RegExp(
-                `^${escapedReqUrl}[^/]+\\.(js|css)$`
-              );
-              if (jsCssRegex.test(requestWithoutQueryParams)) {
-                isInRouter = true;
-                const jsCssPath = path.join(
-                  htmlPageDirectory,
-                  requestWithoutQueryParams
+            if (options.action == "readFile") {
+              if (options.includeJSandCSS) {
+                const jsCssRegex = new RegExp(
+                  `^${escapedReqUrl}[^/]+\\.(js|css)$`
                 );
-                if (/.js$/.exec(requestWithoutQueryParams)) {
-                  serveStaticFile(jsCssPath, "application/javascript", res);
-                } else if (/.css$/.exec(requestWithoutQueryParams)) {
-                  serveStaticFile(jsCssPath, "text/css", res);
+                if (jsCssRegex.test(requestWithoutQueryParams)) {
+                  isInRouter = true;
+                  const jsCssPath = path.join(
+                    htmlPageDirectory,
+                    requestWithoutQueryParams
+                  );
+                  if (/.js$/.exec(requestWithoutQueryParams)) {
+                    serveStaticFile(jsCssPath, "application/javascript", res);
+                  } else if (/.css$/.exec(requestWithoutQueryParams)) {
+                    serveStaticFile(jsCssPath, "text/css", res);
+                  }
+                  return;
                 }
-                return;
               }
-            }
 
-            if (requestWithoutQueryParams == key) {
-              isInRouter = true;
-              if (options.action == "readFile") {
-                const customDirectoryPath = path.join(
+              if (requestWithoutQueryParams == key) {
+                const customFilePath = buildFilePath(
                   htmlPageDirectory,
-                  options.directory
-                );
-                const customFilePath = path.join(
-                  customDirectoryPath,
+                  options.directory,
                   options.file
                 );
+                isInRouter = true;
                 fs.readFile(customFilePath, (err, data) => {
                   if (err) {
                     res.writeHead(500, { "Content-Type": "text/plain" });
@@ -83,6 +87,94 @@ async function createSchedulerServer(logInfo, logError) {
                   res.writeHead(200, { "Content-Type": options.contentType });
                   res.end(data);
                 });
+              }
+            } else if (options.action == "runBat") {
+              if (requestWithoutQueryParams == key) {
+                const batFilePath = buildFilePath(
+                  htmlPageDirectory,
+                  options.directory,
+                  options.file
+                );
+                isInRouter = true;
+                if (req.method === "POST") {
+                  let body = "";
+
+                  req.on("data", (chunk) => {
+                    body += chunk.toString();
+                  });
+
+                  req.on("end", async () => {
+                    const data = JSON.parse(body);
+                    const {
+                      schedulerName,
+                      frequency,
+                      startDate,
+                      time,
+                      day,
+                      command,
+                    } = data;
+
+                    const filePattern = /\.\w+$/;
+
+                    const commandType = filePattern.test(command)
+                      ? "file"
+                      : "command";
+
+                    const params = [
+                      schedulerName,
+                      frequency,
+                      startDate,
+                      time,
+                      command,
+                      commandType,
+                    ];
+
+                    if (day) {
+                      params.push(day);
+                    }
+
+                    const bat = spawn("cmd.exe", [
+                      "/c",
+                      batFilePath,
+                      ...params,
+                    ]);
+
+                    bat.stdout.on('data', data => {
+                      logInfo(data.toString());
+                    });
+
+                    bat.stderr.on("data", (data) => {
+                      logError(data.toString());
+                    });
+
+                    await new Promise((resolve, reject) => {
+                      bat.on("close", (code) => {
+                        if (code === 0) {
+                          resolve(code);
+                        } else {
+                          logError(
+                            `Failed to execute bat file. Exit code: ${code}`
+                          );
+                          reject(
+                            new Error(
+                              `Failed to execute bat file. Exit code: ${code}`
+                            )
+                          );
+                        }
+                      });
+                    })
+                      .then((data) => {
+                        res.writeHead(200, {
+                          "Content-Type": "application/json",
+                        });
+                        res.end(data);
+                      })
+                      .catch(() => {
+                        res.writeHead(500, { "Content-Type": "text/plain" });
+                        res.end("Internal Server Error");
+                      });
+                  });
+                }
               }
             }
           }

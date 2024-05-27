@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
     if (currentJob) {
-      console.log("currentJob", currentJob);
       const formattedStartDate = formatDateYYYYMMDD(
         currentJob["Data de início"]
       );
@@ -126,6 +125,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("time").value = currentJob["Hora de início"];
 
       document.getElementById("day").value = currentJob["Dias"];
+
+      document.getElementById("command").value =
+        currentJob["Tarefa a ser executada"];
     }
   }
 
@@ -133,8 +135,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     .getElementById("schedulerForm")
     .addEventListener("submit", (event) => {
       event.preventDefault();
-      alert("Form submitted!");
-      // Add logic to handle form submission
+
+      const formData = {
+        schedulerName: document.getElementById("schedulerName").value,
+        frequency: document.getElementById("frequency").value,
+        startDate: document.getElementById("startDate").value,
+        time: document.getElementById("time").value,
+        day: document.getElementById("day").value,
+        command: document.getElementById("command").value,
+      };
+
+      fetch("/create_job", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => response)
+        .then((data) => {
+          alert("Job created successfully!");
+        })
+        .catch((error) => {
+          alert("Error:", error);
+        });
     });
 
   document.getElementById("cancelButton").addEventListener("click", () => {

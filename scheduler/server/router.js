@@ -11,6 +11,12 @@ const schedulerRouter = {
     file: "scheduled_tasks_temp.json",
     contentType: "application/json",
   },
+  "/create_job": {
+    method: "post",
+    action: "runBat",
+    directory: "..",
+    file: "create-scheduled-task.bat",
+  },
   "/table": {
     method: "get",
     action: "readFile",

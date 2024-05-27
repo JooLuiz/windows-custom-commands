@@ -1,30 +1,49 @@
 @echo off
 setlocal
 
-:: Define the task name and schedule parameters
-set "taskname=ExecutarMeuScriptSemanalmente"
-set "scriptpath=C:\caminho\para\meu_script.bat"
-@REM set "schedule=12:00"   :: Hora no formato HH:MM (24 horas)(execução única)
-set "time=12:00"   :: Hora no formato HH:MM (24 horas)(execução diária)
-@REM set "day=MON"      :: Dia da semana (MON, TUE, WED, THU, FRI, SAT, SUN)
-@REM set "day=15"       :: Dia do mês (1-31)
+:: Parameters
+set "schedulerName=%~1"
+set "frequency=%~2"
+set "startDate=%~3"
+set "time=%~4"
+set "command=%~5"
+set "commandType=%~6"
+set "day=%~7"
 
-:: Define the date for the task
-set "startdate=20/05/2024" :: Data no formato DD/MM/AAAA
+:: Log the parameters (for debugging)
+echo Scheduler Name: %schedulerName%
+echo Frequency: %frequency%
+echo Start Date: %startDate%
+echo Time: %time%
+echo Command: %command%
+echo Command Type: %commandType%
+echo Day: %day%
 
-:: Create the scheduled task (ONCE)
-@REM schtasks /create /tn "%taskname%" /tr "\"%scriptpath%\"" /sc once /st %schedule% /sd %startdate% /f
+:: Convert the start date from yyyy-MM-dd to MM/dd/yyyy (required by schtasks)
+for /f "tokens=1-3 delims=-" %%a in ("%startDate%") do (
+    set "startDate=%%c/%%b/%%a"
+)
 
-:: Create the scheduled task to run daily
-schtasks /create /tn "%taskname%" /tr "\"%scriptpath%\"" /sc daily /st %time% /f
+echo Start Date Modified: %startDate%
 
-:: Create the scheduled task to run weekly
-@REM schtasks /create /tn "%taskname%" /tr "\"%scriptpath%\"" /sc weekly /d %day% /st %time% /f
+:: Define the frequency switch for schtasks
+set "frequencySwitch="
+if /i "%frequency%"=="unique" set "frequencySwitch=ONCE"
+if /i "%frequency%"=="daily" set "frequencySwitch=DAILY"
+if /i "%frequency%"=="weekly" set "frequencySwitch=WEEKLY"
+if /i "%frequency%"=="monthly" set "frequencySwitch=MONTHLY"
 
-:: Create the scheduled task to run monthly
-@REM schtasks /create /tn "%taskname%" /tr "\"%scriptpath%\"" /sc monthly /d %day% /st %time% /f
+if "%commandType%"=="file" (
+    set "taskToRun=%command%"
+) else (
+    set "taskToRun=cmd /c %command%"
+)
 
-
-
+:: /IT in the end makes the job iterative with the user.
+if "%frequencySwitch%"=="WEEKLY" (
+    schtasks /create /tn "%schedulerName%" /tr "%taskToRun%" /sc %frequencySwitch% /d %day% /st %time% /sd %startDate% /IT
+) else (
+    schtasks /create /tn "%schedulerName%" /tr "%taskToRun%" /sc %frequencySwitch% /st %time% /sd %startDate% /IT
+)
 
 endlocal
