@@ -8,13 +8,14 @@ $(document).ready(function () {
     tbody.empty();
     jobs.forEach((job) => {
       const row = `
-                  <tr data-uuid="${job.uuid}">
+                  <tr data-uuid="${job.uuid}" data-jobname="${job["Nome da tarefa"]}">
                       <td>${job["Nome da tarefa"]}</td>
                       <td>${job["Hora da próxima execução"]}</td>
                       <td>${job["execução"]}</td>
                       <td>
                           <button class="ui button editBtn">Edit</button>
                           <button class="ui button viewBtn">View</button>
+                          <button class="ui button deleteBtn">Delete</button>
                       </td>
                   </tr>
               `;
@@ -110,5 +111,24 @@ $(document).ready(function () {
     const row = $(this).closest("tr");
     const uuid = row.data("uuid");
     window.location.href = `/details?uuid=${uuid}`;
+  });
+
+  $(document).on("click", ".deleteBtn", function () {
+    const row = $(this).closest("tr");
+    const name = row.data("jobname");
+    fetch("/delete_job", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name }),
+    })
+      .then((response) => response)
+      .then((data) => {
+        alert("Job Deleted successfully!");
+      })
+      .catch((error) => {
+        alert("Error:", error);
+      });
   });
 });

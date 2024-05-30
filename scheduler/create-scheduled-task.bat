@@ -47,8 +47,6 @@ if "%commandType%"=="file" (
 
 echo Task to Run: %taskToRun%
 
-
-:: /IT in the end makes the job iterative with the user.
 :: /ru defines which user will be associated to execute this scheduler
 :: /RL defines the permissions the scheduler will have, if setted to highest the terminal running the commando must be running as admin
 :: /F Forces the creation of a new task, replacing any exsting task with the same name

@@ -86,6 +86,7 @@ async function createSchedulerServer(logInfo, logError) {
                   logInfo(`Opening ${req.url} page`);
                   res.writeHead(200, { "Content-Type": options.contentType });
                   res.end(data);
+                  return
                 });
               }
             } else if (options.action == "runBat") {
@@ -105,33 +106,8 @@ async function createSchedulerServer(logInfo, logError) {
 
                   req.on("end", async () => {
                     const data = JSON.parse(body);
-                    const {
-                      schedulerName,
-                      frequency,
-                      startDate,
-                      time,
-                      day,
-                      command,
-                    } = data;
-
-                    const filePattern = /\.\w+$/;
-
-                    const commandType = filePattern.test(command)
-                      ? "file"
-                      : "command";
-
-                    const params = [
-                      schedulerName,
-                      frequency,
-                      startDate,
-                      time,
-                      command,
-                      commandType,
-                    ];
-
-                    if (day) {
-                      params.push(day);
-                    }
+                    
+                    const params = options.paramsBuilder(data)
 
                     const bat = spawn("cmd.exe", [
                       "/c",
@@ -183,8 +159,8 @@ async function createSchedulerServer(logInfo, logError) {
     );
 
     if (!isInRouter) {
-      res.writeHead(404, { "Content-Type": "text/plain" });
       logError(`Page Not Found: ${req.url}`);
+      res.writeHead(404, { "Content-Type": "text/plain" });
       res.end("Not Found");
     }
   });
