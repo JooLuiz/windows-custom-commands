@@ -8,7 +8,12 @@ set "csvTempFile=%batchDir%scheduled_tasks_temp.csv"
 
 set "jsonTempFile=%batchDir%scheduled_tasks_temp.json"
 
-del %csvTempFile%
-del %jsonTempFile%
+if exist "%csvTempFile%" (
+    del %csvTempFile%
+)
+
+if exist "%jsonTempFile%" (
+    del %jsonTempFile%
+)
 
 endlocal
