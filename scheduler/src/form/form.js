@@ -26,10 +26,12 @@ async function translateFrequency(frequency) {
 
   let hasFreq;
 
-  await Object.entries(frequenciesTranslations).forEach((entry) => {
+  Object.entries(frequenciesTranslations).forEach((entry) => {
     let key = entry[0];
     let options = entry[1];
-    if (frequency.trim().toLowerCase().includes(key.trim().toLowerCase())) {
+    if (
+      frequency?.trim()?.toLowerCase()?.includes(key?.trim()?.toLowerCase())
+    ) {
       hasFreq = options;
     }
   });
@@ -40,12 +42,33 @@ async function translateFrequency(frequency) {
 document.addEventListener("DOMContentLoaded", async () => {
   const frequencySelect = document.getElementById("frequency");
   const dayField = document.getElementById("dayField");
-  const daySelect = document.getElementById("day");
+  const dayInput = document.getElementById("day");
   const timeField = document.getElementById("timeField");
   const startDateField = document.getElementById("startDateField");
+  const changedFields = [];
+  let currentJob;
+  const inputFieldsNames = [
+    "schedulerName",
+    "frequency",
+    "startDate",
+    "time",
+    "day",
+    "command",
+  ];
+
+  inputFieldsNames.forEach((fieldName) => {
+    const field = document.getElementById(fieldName);
+    field.addEventListener("change", (event) => {
+      const fieldId = event.target.id;
+      if (!changedFields.includes(fieldId)) {
+        changedFields.push(fieldId);
+      }
+    });
+  });
 
   frequencySelect.addEventListener("change", () => {
     const frequency = frequencySelect.value;
+
     if (frequency === "weekly" || frequency === "monthly") {
       dayField.style.display = "block";
       timeField.style.display = "block";
@@ -68,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   const populateDayOptions = (frequency) => {
-    daySelect.innerHTML = "";
+    dayInput.innerHTML = "";
     if (frequency === "weekly") {
       const daysOfWeek = [
         ["Sunday", "SUN"],
@@ -83,20 +106,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         const option = document.createElement("option");
         option.value = day[1];
         option.textContent = day[0];
-        daySelect.appendChild(option);
+        dayInput.appendChild(option);
       });
     } else if (frequency === "monthly") {
       for (let i = 1; i <= 31; i++) {
         const option = document.createElement("option");
         option.value = i;
         option.textContent = i;
-        daySelect.appendChild(option);
+        dayInput.appendChild(option);
       }
     }
   };
 
   if (window.location.search.includes("uuid=")) {
-    let currentJob;
     const uuid = window.location.search.split("uuid=")[1].split("&")[0];
 
     await $.getJSON("scheduled_tasks", function (data) {
@@ -117,14 +139,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("schedulerName").value =
         currentJob["Nome da tarefa"];
 
+      document.getElementById("schedulerName").disabled = true;
+
       document.getElementById("frequency").value = translatedFrequency;
       document.getElementById("frequency").dispatchEvent(new Event("change"));
+      document.getElementById("frequency").disabled = true;
 
       document.getElementById("startDate").value = formattedStartDate;
 
       document.getElementById("time").value = currentJob["Hora de início"];
 
       document.getElementById("day").value = currentJob["Dias"];
+      document.getElementById("day").disabled = true;
 
       document.getElementById("command").value =
         currentJob["Tarefa a ser executada"];
@@ -133,32 +159,95 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document
     .getElementById("schedulerForm")
-    .addEventListener("submit", (event) => {
+    .addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const formData = {
-        schedulerName: document.getElementById("schedulerName").value,
-        frequency: document.getElementById("frequency").value,
-        startDate: document.getElementById("startDate").value,
-        time: document.getElementById("time").value,
-        day: document.getElementById("day").value,
-        command: document.getElementById("command").value,
-      };
+      if (!currentJob) {
+        const formData = {
+          schedulerName: document.getElementById("schedulerName").value,
+          frequency: document.getElementById("frequency").value,
+          startDate: document.getElementById("startDate").value,
+          time: document.getElementById("time").value,
+          day: document.getElementById("day").value,
+          command: document.getElementById("command").value,
+        };
 
-      fetch("/create_job", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => response)
-        .then((data) => {
-          alert("Job created successfully!");
+        fetch("/create_job", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         })
-        .catch((error) => {
-          alert("Error:", error);
-        });
+          .then((response) => response)
+          .then((data) => {
+            alert("Job created successfully!");
+          })
+          .catch((error) => {
+            alert("Error:", error);
+          });
+      } else if (currentJob) {
+        if (changedFields.length > 0) {
+          const formData = { schedulerName: currentJob["Nome da tarefa"] };
+          const translatedFrequency = await translateFrequency(
+            currentJob[["Tipo de Agendamento"]]
+          );
+          changedFields.forEach((changedFieldId, idx) => {
+            const changedFieldValue =
+              document.getElementById(changedFieldId).value;
+            if (
+              changedFieldId === "frequency" &&
+              translatedFrequency !== changedFieldValue
+            ) {
+              formData["frequency"] = changedFieldValue;
+            }
+
+            if (
+              changedFieldId === "startDate" &&
+              formatDateYYYYMMDD(currentJob["Data de início"]) !==
+                changedFieldValue
+            ) {
+              formData["startDate"] = changedFieldValue;
+            }
+
+            if (
+              changedFieldId === "time" &&
+              currentJob["Hora de início"] != changedFieldValue + ":00"
+            ) {
+              formData["time"] = changedFieldValue;
+            }
+
+            if (
+              changedFieldId === "day" &&
+              currentJob["Dias"] != changedFieldValue
+            ) {
+              formData["day"] = changedFieldValue;
+            }
+
+            if (
+              changedFieldId === "command" &&
+              currentJob["Tarefa a ser executada"] != changedFieldValue
+            ) {
+              formData["command"] = changedFieldValue;
+            }
+          });
+
+          fetch("/edit_job", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response)
+            .then((data) => {
+              alert("Job edited successfully!");
+            })
+            .catch((error) => {
+              alert("Error:", error);
+            });
+        }
+      }
     });
 
   document.getElementById("cancelButton").addEventListener("click", () => {

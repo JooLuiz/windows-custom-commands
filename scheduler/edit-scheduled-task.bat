@@ -9,12 +9,14 @@ set "taskTime=%~4"
 set "command=%~5"
 set "commandType=%~6"
 set "day=%~7"
+set "userPassword=%~8"
 set "frequencySwitch="
 set "logFile="
 set "taskToRun="
 
 :: Normalizes the task parameters
 call "%~dp0normalize-params.bat"
+echo User Password: %userPassword%
 
 :: /ru defines which user will be associated to execute this scheduler
 :: /rp defines the password that will be used to perform the edit action
@@ -22,10 +24,16 @@ call "%~dp0normalize-params.bat"
 :: /F Forces the creation of a new task, replacing any exsting task with the same name
 :: /IT This parameter makes the task interactive, which means the task will show up in he user screen
 :: All (or at lease some) of the parameters above must be editted to be in the job form and be passed to the schtask command if checked there.
-if /i "%frequencySwitch%"=="WEEKLY" (
-    schtasks /create /tn "%schedulerName%" /tr "%taskToRun%" /sc %frequencySwitch% /d %day% /st %taskTime% /sd %startDate% /ru %USERNAME% /RL HIGHEST /F /IT
-) else (
-    schtasks /create /tn "%schedulerName%" /tr "%taskToRun%" /sc %frequencySwitch% /st %taskTime% /sd %startDate% /ru %USERNAME% /RL HIGHEST /F /IT
+if not "%taskToRun%"=="" (
+    schtasks /change /tn "%schedulerName%" /tr "%taskToRun%" /ru %USERNAME% /rp %userPassword% /IT
+)
+
+if not "%taskTime%"=="" (
+    schtasks /change /tn "%schedulerName%" /st %taskTime% /ru %USERNAME% /rp %userPassword% /IT
+)
+
+if not "%startDate%"=="" (
+    schtasks /change /tn "%schedulerName%" /sd %startDate% /ru %USERNAME% /rp %userPassword% /IT
 )
 
 :: Check if the task was edited successfully

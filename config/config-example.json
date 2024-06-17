@@ -10,6 +10,7 @@
     }
   },
   "scheduler": {
-    "serverPort": 3002
+    "serverPort": 3002,
+    "userPassword": ""
   }
 }

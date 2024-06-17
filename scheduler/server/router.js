@@ -1,4 +1,4 @@
-const { handleCreateJobParams, handleDeleteJobParams } = require("../functions");
+const { handleCreateJobParams, handleDeleteJobParams, handleEditJobParams } = require("../functions");
 
 const schedulerRouter = {
   "/": {
@@ -19,6 +19,13 @@ const schedulerRouter = {
     directory: "..",
     file: "create-scheduled-task.bat",
     paramsBuilder: handleCreateJobParams,
+  },
+  "/edit_job": {
+    method: "post",
+    action: "runBat",
+    directory: "..",
+    file: "edit-scheduled-task.bat",
+    paramsBuilder: handleEditJobParams,
   },
   "/delete_job": {
     method: "post",

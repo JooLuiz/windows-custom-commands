@@ -107,7 +107,7 @@ async function createSchedulerServer(logInfo, logError) {
                   req.on("end", async () => {
                     const data = JSON.parse(body);
                     
-                    const params = options.paramsBuilder(data)
+                    const params = await options.paramsBuilder(data)
 
                     const bat = spawn("cmd.exe", [
                       "/c",
