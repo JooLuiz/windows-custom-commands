@@ -180,11 +180,17 @@ document.addEventListener("DOMContentLoaded", async () => {
           body: JSON.stringify(formData),
         })
           .then((response) => response)
-          .then((data) => {
-            alert("Job created successfully!");
+          .then(() => {
+            fetch("/refresh_jobs", {
+              method: "POST",
+            })
+              .then((resp) => resp)
+              .then(() => {
+                window.location.pathname = "/table";
+              });
           })
           .catch((error) => {
-            alert("Error:", error);
+            console.error("Error:", error);
           });
       } else if (currentJob) {
         if (changedFields.length > 0) {
@@ -240,11 +246,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             body: JSON.stringify(formData),
           })
             .then((response) => response)
-            .then((data) => {
-              alert("Job edited successfully!");
+            .then(() => {
+              fetch("/refresh_jobs", {
+                method: "POST",
+              })
+                .then((resp) => resp)
+                .then(() => {
+                  window.location.pathname = "/table";
+                });
             })
             .catch((error) => {
-              alert("Error:", error);
+              console.error("Error:", error);
             });
         }
       }

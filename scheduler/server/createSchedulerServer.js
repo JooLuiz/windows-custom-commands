@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const { schedulerRouter } = require("./router");
 const { spawn } = require("child_process");
+const { handlePostRequest } = require("../functions");
 
 async function createSchedulerServer(logInfo, logError) {
   logInfo("Creating Server");
@@ -32,7 +33,7 @@ async function createSchedulerServer(logInfo, logError) {
     let isInRouter = false;
 
     await Promise.all(
-      Object.entries(schedulerRouter).map((entry) => {
+      Object.entries(schedulerRouter).map(async (entry) => {
         let key = entry[0];
         let options = entry[1];
 
@@ -86,7 +87,7 @@ async function createSchedulerServer(logInfo, logError) {
                   logInfo(`Opening ${req.url} page`);
                   res.writeHead(200, { "Content-Type": options.contentType });
                   res.end(data);
-                  return
+                  return;
                 });
               }
             } else if (options.action == "runBat") {
@@ -106,8 +107,8 @@ async function createSchedulerServer(logInfo, logError) {
 
                   req.on("end", async () => {
                     const data = JSON.parse(body);
-                    
-                    const params = await options.paramsBuilder(data)
+
+                    const params = await options.paramsBuilder(data);
 
                     const bat = spawn("cmd.exe", [
                       "/c",
@@ -115,7 +116,7 @@ async function createSchedulerServer(logInfo, logError) {
                       ...params,
                     ]);
 
-                    bat.stdout.on('data', data => {
+                    bat.stdout.on("data", (data) => {
                       logInfo(data.toString());
                     });
 
@@ -150,6 +151,13 @@ async function createSchedulerServer(logInfo, logError) {
                         res.end("Internal Server Error");
                       });
                   });
+                }
+              }
+            } else if (options.action == "exec") {
+              if (requestWithoutQueryParams == key) {
+                isInRouter = true;
+                if (req.method === "POST") {
+                  await handlePostRequest(req, res, options);
                 }
               }
             }

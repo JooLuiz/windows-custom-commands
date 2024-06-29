@@ -1,4 +1,9 @@
-const { handleCreateJobParams, handleDeleteJobParams, handleEditJobParams } = require("../functions");
+const {
+  handleCreateJobParams,
+  handleDeleteJobParams,
+  handleEditJobParams,
+  refreshJobs,
+} = require("../functions");
 
 const schedulerRouter = {
   "/": {
@@ -57,6 +62,11 @@ const schedulerRouter = {
     file: "details.html",
     contentType: "text/html",
     includeJSandCSS: true,
+  },
+  "/refresh_jobs": {
+    method: "post",
+    action: "exec",
+    function: refreshJobs,
   },
 };
 

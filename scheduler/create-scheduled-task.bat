@@ -30,7 +30,7 @@ if /i "%frequencySwitch%"=="WEEKLY" (
 
 :: Check if the task was edited successfully
 if %ERRORLEVEL% equ 0 (
-    echo [SUCCESS] - The scheduled task "%schedulerName%" was updated successfully with new start time %newStartTime%.
+    echo [SUCCESS] - The scheduled task "%schedulerName%" was created successfully with new start time %newStartTime%.
 ) else (
     echo [ERROR] - Failed to update the scheduled task "%schedulerName%".
 )

@@ -124,11 +124,17 @@ $(document).ready(function () {
       body: JSON.stringify({ name }),
     })
       .then((response) => response)
-      .then((data) => {
-        alert("Job Deleted successfully!");
+      .then(() => {
+        fetch("/refresh_jobs", {
+          method: "POST",
+        })
+          .then((resp) => resp)
+          .then(() => {
+            window.location.pathname = "/table";
+          });
       })
       .catch((error) => {
-        alert("Error:", error);
+        console.error("Error:", error);
       });
   });
 });
