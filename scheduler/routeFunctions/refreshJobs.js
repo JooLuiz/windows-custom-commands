@@ -1,12 +1,12 @@
-const { getScheduledJobs } = require("./getScheduledJobs");
-const { mountJobsJsonFile } = require("./mountJobsJsonFile");
+const { getScheduledJobs } = require("../functions/getScheduledJobs");
+const { mountJobsJsonFile } = require("../functions/mountJobsJsonFile");
 const {
   schedulerLogInfo,
   schedulerLogError,
   isVerbose,
-} = require("./schedulerLoggers");
+} = require("../functions/schedulerLoggers");
 
-async function refreshJobs(body, res) {
+async function refreshJobs(req, res, route, body) {
   await getScheduledJobs(schedulerLogInfo, schedulerLogError);
 
   await mountJobsJsonFile(schedulerLogInfo, schedulerLogError, isVerbose);
@@ -15,7 +15,7 @@ async function refreshJobs(body, res) {
     "Content-Type": "application/json",
   });
 
-  res.end(JSON.stringify({"message": "Jobs Successfully Updated"}));
+  res.end(JSON.stringify({ message: "Jobs Successfully Updated" }));
 
   return;
 }

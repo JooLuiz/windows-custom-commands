@@ -1,4 +1,6 @@
-const handlePostRequest = async (req, res, options) => {
+const { handleRequest } = require("./handleRequest");
+
+const handlePostRequest = async (req, res, route) => {
   let body = "";
 
   req.on("data", (chunk) => {
@@ -6,9 +8,7 @@ const handlePostRequest = async (req, res, options) => {
   });
 
   req.on("end", async () => {
-    const result = await options.function(body, res);
-
-    return result;
+    handleRequest(req, res, route, body)
   });
 };
 
