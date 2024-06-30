@@ -116,6 +116,7 @@ $(document).ready(function () {
   $(document).on("click", ".deleteBtn", function () {
     const row = $(this).closest("tr");
     const name = row.data("jobname");
+    showLoader();
     fetch("/delete_job", {
       method: "POST",
       headers: {
@@ -130,10 +131,22 @@ $(document).ready(function () {
         })
           .then((resp) => resp)
           .then(() => {
-            window.location.pathname = "/table";
+            hideLoader();
+            showDeleteSuccess();
+            setTimeout(() => {
+              window.location.pathname = "/table";
+            }, 5000);
+          })
+          .catch((error) => {
+            showError(error.message);
+            console.error("Error:", error);
+          })
+          .finally(() => {
+            hideLoader();
           });
       })
       .catch((error) => {
+        showError(error.message);
         console.error("Error:", error);
       });
   });

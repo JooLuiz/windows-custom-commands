@@ -172,6 +172,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           command: document.getElementById("command").value,
         };
 
+        showLoader();
         fetch("/create_job", {
           method: "POST",
           headers: {
@@ -186,10 +187,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             })
               .then((resp) => resp)
               .then(() => {
-                window.location.pathname = "/table";
+                hideLoader();
+                showCreateSuccess();
+                setTimeout(() => {
+                  window.location.pathname = "/table";
+                }, 5000);
+              })
+              .catch((error) => {
+                showError(error.message);
+                console.error("Error:", error);
+              })
+              .finally(() => {
+                hideLoader();
               });
           })
           .catch((error) => {
+            showError(error.message);
             console.error("Error:", error);
           });
       } else if (currentJob) {
@@ -238,6 +251,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
           });
 
+          showLoader()
           fetch("/edit_job", {
             method: "POST",
             headers: {
@@ -252,10 +266,22 @@ document.addEventListener("DOMContentLoaded", async () => {
               })
                 .then((resp) => resp)
                 .then(() => {
-                  window.location.pathname = "/table";
+                  hideLoader();
+                  showUpdateSuccess();
+                  setTimeout(() => {
+                    window.location.pathname = "/table";
+                  }, 5000);
+                })
+                .catch((error) => {
+                  showError(error.message);
+                  console.error("Error:", error);
+                })
+                .finally(() => {
+                  hideLoader();
                 });
             })
             .catch((error) => {
+              showError(error.message);
               console.error("Error:", error);
             });
         }
