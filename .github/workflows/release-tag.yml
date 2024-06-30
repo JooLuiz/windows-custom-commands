@@ -20,7 +20,7 @@ jobs:
 
     - name: Create GitHub tag
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TAG_TOKEN }}
       run: |
         version=${{ steps.get_version.outputs.version }}
         git config --global user.name "${{ github.actor }}"
@@ -31,7 +31,7 @@ jobs:
     - name: Create GitHub release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TAG_TOKEN }}
       with:
         tag_name: "v${{ steps.get_version.outputs.version }}"
         release_name: "v${{ steps.get_version.outputs.version }}"
