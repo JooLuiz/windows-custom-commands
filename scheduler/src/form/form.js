@@ -118,6 +118,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
+  document.getElementById("frequency").dispatchEvent(new Event("change"));
+  
   if (window.location.search.includes("uuid=")) {
     const uuid = window.location.search.split("uuid=")[1].split("&")[0];
 
