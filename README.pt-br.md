@@ -178,7 +178,43 @@ da mesma forma que o comando anterior e conforme mencionado na seção 1.2 deste
 ```powershell
 New-Alias -Name reinitialize -Value Caminho\Para\Seu\Repositorio\Clonado\reinitialize\reinitialize.bat
 ```
+Claro, aqui está o markdown traduzido para o português:
 
+---
+
+### 3.4 scheduler
+
+#### 3.4.1 Especificações
+
+O comando `scheduler` abre um navegador e mostra a lista de tarefas agendadas do computador, permitindo as ações de CRUD para tarefas agendadas. O comando salva as tarefas agendadas em um arquivo temporário e inicia um servidor Node para servir os arquivos HTML e rotas. Por padrão, o comando inicia em um terminal separado.
+
+Ele aceita os seguintes parâmetros:
+
+| Parâmetro Longo | Parâmetro Curto | Obrigatório | Descrição                                                              |
+| ---------------- | ---------------- | ------------ | ---------------------------------------------------------------------- |
+| \_start\_          |                  | NÃO          | Inicia o servidor no mesmo terminal que executou o comando             |
+| --verbose        | -v               | NÃO          | Indica se deve exibir logs durante a execução                           |
+
+#### 3.4.2 Configuração
+
+Antes de usar o comando `scheduler`, você precisa configurar a porta do servidor que deve ser usada (o padrão é 3002) e inserir a senha do usuário do computador, pois isso é necessário para atualizar as tarefas agendadas. Para fazer isso, você precisa criar/atualizar o arquivo `config.json` no diretório `./config/`. Há um exemplo de como essa configuração deve parecer na mesma pasta, e está estruturado da seguinte forma:
+
+```json
+{
+  "scheduler": {
+    "serverPort": 3002,
+    "userPassword": ""
+  }
+}
+```
+
+De forma semelhante ao comando anterior e conforme mencionado na seção 1.2 deste README, você precisa configurar o comando no `$PROFILE`. Uma vez que o perfil esteja aberto, o comando fica assim:
+
+```powershell
+New-Alias -Name scheduler -Value Caminho\Para\Seu\Repositório\Clonado\scheduler\scheduler.bat
+```
+
+---
 
 # Other versions
 

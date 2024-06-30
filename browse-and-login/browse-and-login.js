@@ -1,5 +1,4 @@
-const puppeteer = require("puppeteer");
-const { getConfigs, logger, getArgValue, consts } = require("../utils");
+const { getConfigs, logger, getArgValue, consts, createPuppeteerBrowser } = require("../utils");
 
 const isVerbose = getArgValue("--verbose", "equals");
 
@@ -39,8 +38,13 @@ async function browseAndLogin() {
 
   logInfo("Config successfully loaded");
 
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await createPuppeteerBrowser(isVerbose)
   const page = await browser.newPage();
+
+  await page.setViewport({
+    width: 1540,
+    height: 700,
+  });
 
   logInfo("Opened Default Browser");
 

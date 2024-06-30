@@ -32,11 +32,11 @@ New-Alias -Name my-command -Value Path\To\My\Command.bat
 
 Now, what is happening here?
 
-| Action      | Definition |
-|-----------|-----------|
+| Action    | Definition                                                                                                                                                                                                     |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | New-Alias | Creates aliases that associate commands with specific files, [click here for more information](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/new-alias?view=powershell-7.4) |
-| -Name | Defines the name of the command to be executed in PowerShell; in this example, it would be "my-command"     |
-| -Value | Defines which file will be called when the command is executed |
+| -Name     | Defines the name of the command to be executed in PowerShell; in this example, it would be "my-command"                                                                                                        |
+| -Value    | Defines which file will be called when the command is executed                                                                                                                                                 |
 
 #### 1.2.2 Creating Functions
 
@@ -82,10 +82,10 @@ npm install
 
 The `login` command opens a browser and logs in according to the settings. It accepts the following parameters:
 
-| Long Parameter | Short Parameter  | Required | Description |
-|---|---|---| --- |
-| --action  | -a  | YES  | Indicates the action the login will perform    |
-|  --verbose | -v  | NO  | Indicates whether to display logs during execution    |
+| Long Parameter | Short Parameter | Required | Description                                        |
+| -------------- | --------------- | -------- | -------------------------------------------------- |
+| --action       | -a              | YES      | Indicates the action the login will perform        |
+| --verbose      | -v              | NO       | Indicates whether to display logs during execution |
 
 #### 3.1.2 Configuration
 
@@ -143,7 +143,9 @@ What this configuration does is define an alias called login that runs the brows
 ```shell
 login --action=log-email
 ```
+
 &
+
 ```shell
 log-email
 ```
@@ -176,6 +178,38 @@ Similarly to the previous command and as mentioned in section 1.2 of this README
 
 ```powershell
 New-Alias -Name reinitialize -Value Path\To\Your\Cloned\Repo\reinitialize\reinitialize.bat
+```
+
+### 3.4 scheduler
+
+#### 3.4.1 Specifications
+
+The `scheduler` command opens a browser and shows the list of scheduled jobs of the computer, it allows the CRUD actions for scheduled jobs. The command saves the scheduled jobs in a temporary file and starts a node server to serve the html files and routes, by default the command starts in a separated
+
+It accepts the following parameters:
+
+| Long Parameter | Short Parameter | Required | Description                                                 |
+| -------------- | --------------- | -------- | ----------------------------------------------------------- |
+| \_start\_        |                 | NO       | Starts the server in the same terminal that ran the command |
+| --verbose      | -v              | NO       | Indicates whether to display logs during execution          |
+
+#### 3.4.2 Configuration
+
+Before using the `scheduler` command, you need to configure the server port that should be used (the default is 3002) and to insert the computer user password because this is needed to update scheduled tasks. To do this, you need to create/update the `config.json` file in the `./config/` directory. There is an example of how this config should look in the same folder, and it is structured like this:
+
+```json
+{
+  "scheduler": {
+    "serverPort": 3002,
+    "userPassword": ""
+  }
+}
+```
+
+Similarly to the previous command and as mentioned in section 1.2 of this README, you need to configure the command in `$PROFILE`. Once the profile is open, the command looks like this:
+
+```powershell
+New-Alias -Name scheduler -Value Path\To\Your\Cloned\Repo\scheduler\scheduler.bat
 ```
 
 # Other versions

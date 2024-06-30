@@ -13,7 +13,6 @@ for %%x in (%*) do (
   set "argVec[!argCount!]=%%~x"
 
   if "%%~x"=="-v" (
-    echo "sou verbose"
     set isVerbose=true
   ) else if "%%~x"=="--verbose" (
     set isVerbose=true
@@ -31,12 +30,12 @@ for %%x in (%*) do (
 if defined hasAction (
   call set "action_value=action=%%argVec[%actionIndex%]%%"
 ) else (
-  echo Missing the mandatory parameter --action or -a.
+  echo [ERROR] - [Browse and Login] - Missing the mandatory parameter --action or -a.
   exit
 )
 
 if defined isVerbose (
-  echo Verbose mode activated.
+  echo [INFO] - [Browse and Login] - Verbose mode activated.
   node %JS_FILE% --verbose "%action_value%"
 ) else (
   node %JS_FILE% "%action_value%"
