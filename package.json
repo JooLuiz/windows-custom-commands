@@ -1,6 +1,6 @@
 {
   "name": "windows-custom-commands",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "custom windows powershell commands",
   "license": "ISC",
   "author": "João Luiz de Castro",
