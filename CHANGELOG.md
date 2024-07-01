@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2024-07-01
+
+### Fixed
+
+- Adjusting invalid characters issue in release tag flow
+
 ## [0.1.4] - 2024-07-01
 
-### Added
+### Fixed
 
 - Adjusting the release tag release notes message
 

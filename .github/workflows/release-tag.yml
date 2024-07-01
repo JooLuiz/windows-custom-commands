@@ -26,7 +26,12 @@ jobs:
         last_tag=$(git describe --tags --abbrev=0)
         git log "$last_tag"..HEAD --pretty=format:'* [%h] - %s' --abbrev-commit > release_notes.md
         release_notes=$(<release_notes.md)
+        # Ensure the notes are properly escaped and formatted for GitHub Actions
+        release_notes="${release_notes//'%'/'%25'}"
+        release_notes="${release_notes//$'\n'/'%0A'}"
+        release_notes="${release_notes//$'\r'/'%0D'}"
         echo "notes=$release_notes" >> "$GITHUB_OUTPUT"
+
 
     - name: Create GitHub tag
       env:
