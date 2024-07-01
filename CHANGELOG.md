@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2024-07-01
+
+### Added
+
+- Enhancing github action to include the release notes in the release.
+
 ## [0.1.0] - 2024-06-30
 
 ### Added
