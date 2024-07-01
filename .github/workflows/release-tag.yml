@@ -11,22 +11,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+          fetch-depth: 0 
 
     - name: Get the version from package.json
       id: get_version
       run: |
         version=$(jq -r '.version' package.json)
-        echo "::set-output name=version::$version"
-
-    - name: Create GitHub tag
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TAG_TOKEN }}
-      run: |
-        version=${{ steps.get_version.outputs.version }}
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-        git tag -a "v$version" -m "Release version $version"
-        git push origin "v$version"
+        echo "version=$version" >> "$GITHUB_OUTPUT"
 
     - name: Generate release notes
       id: generate_release_notes
@@ -39,7 +31,17 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
           -d "{\"tag_name\": \"v$version\", \"previous_tag_name\": \"$(git describe --tags --abbrev=0 HEAD^)\", \"target_commitish\": \"$GITHUB_SHA\", \"name\": \"v$version\"}" \
           | jq -r .body)
-        echo "::set-output name=notes::$release_notes"
+        echo "notes=$release_notes" >> "$GITHUB_OUTPUT"
+
+    - name: Create GitHub tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TAG_TOKEN }}
+      run: |
+        version=${{ steps.get_version.outputs.version }}
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git tag -a "v$version" -m "Release version $version"
+        git push origin "v$version"
 
     - name: Create GitHub release
       uses: actions/create-release@v1
