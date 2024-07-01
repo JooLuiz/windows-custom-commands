@@ -1,0 +1,43 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check for required file changes
+        id: file_changes
+        run: |
+          # Get the list of files changed in the PR
+          files=$(git diff --name-only origin/main...HEAD)
+
+          # Initialize variables
+          changelog_changed=false
+          packagejson_changed=false
+
+          # Check if the required files are in the list of changed files
+          for file in $files; do
+            if [ "$file" == "CHANGELOG.md" ]; then
+              changelog_changed=true
+            fi
+            if [ "$file" == "package.json" ]; then
+              packagejson_changed=true
+            fi
+          done
+
+          # Set output variables
+          echo "::set-output name=changelog_changed::$changelog_changed"
+          echo "::set-output name=packagejson_changed::$packagejson_changed"
+
+      - name: Ensure required files are changed
+        if: steps.file_changes.outputs.changelog_changed == 'false' || steps.file_changes.outputs.packagejson_changed == 'false'
+        run: |
+          echo "ERROR: Both CHANGELOG.md and package.json must be modified in this PR."
+          exit 1
