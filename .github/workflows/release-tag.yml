@@ -22,15 +22,10 @@ jobs:
 
     - name: Generate release notes
       id: generate_release_notes
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TAG_TOKEN }}
       run: |
-        version=${{ steps.get_version.outputs.version }}
-        release_notes=$(curl -s -H "Authorization: token ${{ secrets.RELEASE_TAG_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
-          -d "{\"tag_name\": \"v$version\", \"previous_tag_name\": \"$(git describe --tags --abbrev=0 HEAD^)\", \"target_commitish\": \"$GITHUB_SHA\", \"name\": \"v$version\"}" \
-          | jq -r .body)
+        last_tag=$(git describe --tags --abbrev=0)
+        git log "$last_tag"..HEAD --pretty=format:'* [%h] - %s' --abbrev-commit > release_notes.md
+        release_notes=$(<release_notes.md)
         echo "notes=$release_notes" >> "$GITHUB_OUTPUT"
 
     - name: Create GitHub tag
